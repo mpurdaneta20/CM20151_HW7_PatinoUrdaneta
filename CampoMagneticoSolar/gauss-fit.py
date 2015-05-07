@@ -23,71 +23,75 @@ def gauss_model(t,c,d,sigma,mu):
 
 rows = np.array(['observacion', 'c', 'd', 'sigma', 'mu', 'likelihood'])
 
-for k in range(138, 148):
+x = np.arange(138, 148, 1)
+y = np.arange(235,245, 1)
+g = np.meshgrid(x,y)
+Pixel_x = g[0].ravel()
+Pixel_y = g[1].ravel()
 
-	print k
-	for j in range(235, 245):
-		
-		campo = data[:, k, j]
-		c_walk = np.empty((0))
-		d_walk = np.empty((0))
-		sigma_walk = np.empty((0))
-		mu_walk = np.empty((0))
-		l_walk = np.empty((0))
-		
-		c_walk = np.append(c_walk, np.random.random())
-		d_walk = np.append(d_walk, np.random.random())
-		sigma_walk = np.append(sigma_walk, np.random.random())
-		mu_walk = np.append(mu_walk, np.random.random())
-		
-		y_init = gauss_model(time, c_walk[0], d_walk[0], sigma_walk[0], mu_walk[0])
-		l_walk = np.append(l_walk, likelihood(campo, y_init))
+for k in range(100):
 
-		n_iterations = 20000
-		for i in range(n_iterations):
-		    c_prime = np.random.normal(c_walk[i], 20) 
-		    d_prime = np.random.normal(d_walk[i], 0.1)
-		    sigma_prime = np.random.normal(sigma_walk[i], 1)
-		    mu_prime = np.random.normal(mu_walk[i], 10)
-		
-		    y_init = gauss_model(time, c_walk[i], d_walk[i], sigma_walk[i], mu_walk[i])
-		    y_prime = gauss_model(time, c_prime, d_prime, sigma_prime, mu_prime)
-		    
-		    l_prime = likelihood(campo, y_prime)
-		    l_init = likelihood(campo, y_init)
-		    
-		    alpha = l_prime-l_init
-		    if(alpha>=0.0):
-		        c_walk = np.append(c_walk, c_prime)
-		        d_walk = np.append(d_walk, d_prime)
-		        sigma_walk = np.append(sigma_walk, sigma_prime)
-		        mu_walk = np.append(mu_walk, mu_prime)
-		        l_walk = np.append(l_walk, l_prime)
-		    else:
-		        beta = np.random.random()
-		        if(beta<=alpha):
-		            c_walk = np.append(c_walk, c_prime)
-		            d_walk = np.append(d_walk, d_prime)
-		            sigma_walk = np.append(sigma_walk, sigma_prime)
-		            mu_walk = np.append(mu_walk, mu_prime)
-		            l_walk = np.append(l_walk, l_prime)
-		        else:
-		            c_walk = np.append(c_walk,c_walk[i])
-		            d_walk = np.append(d_walk,d_walk[i])
-		            sigma_walk = np.append(sigma_walk, sigma_walk[i])
-		            mu_walk = np.append(mu_walk, mu_walk[i])
-		            l_walk = np.append(l_walk, l_init)
+	print k			
+	campo = data[:, Pixel_x[k], Pixel_y[k]]
+	c_walk = np.empty((0))
+	d_walk = np.empty((0))
+	sigma_walk = np.empty((0))
+	mu_walk = np.empty((0))
+	l_walk = np.empty((0))
+	
+	c_walk = np.append(c_walk, np.random.random())
+	d_walk = np.append(d_walk, np.random.random())
+	sigma_walk = np.append(sigma_walk, np.random.random())
+	mu_walk = np.append(mu_walk, np.random.random())
+	
+	y_init = gauss_model(time, c_walk[0], d_walk[0], sigma_walk[0], mu_walk[0])
+	l_walk = np.append(l_walk, likelihood(campo, y_init))
+	n_iterations = 20000
 
-		max_index = np.argmax(l_walk)
-		likelihood_obs = str(l_walk[max_index])
-		best_c = str(c_walk[max_index])
-		best_d = str(d_walk[max_index])
-		best_sigma = str(sigma_walk[max_index])
-		best_mu = str(mu_walk[max_index])
-		observacion = str(i) + str(j)
-			
-		row =  [observacion, best_c, best_d, best_sigma, best_mu, likelihood_obs]
-		rows = np.vstack((rows, row))
+	for i in range(n_iterations):
+	    c_prime = np.random.normal(c_walk[i], 20) 
+	    d_prime = np.random.normal(d_walk[i], 0.1)
+	    sigma_prime = np.random.normal(sigma_walk[i], 1)
+	    mu_prime = np.random.normal(mu_walk[i], 10)
+	
+	    y_init = gauss_model(time, c_walk[i], d_walk[i], sigma_walk[i], mu_walk[i])
+	    y_prime = gauss_model(time, c_prime, d_prime, sigma_prime, mu_prime)
+	    
+	    l_prime = likelihood(campo, y_prime)
+	    l_init = likelihood(campo, y_init)
+	    
+	    alpha = l_prime-l_init
+	    if(alpha>=0.0):
+	        c_walk = np.append(c_walk, c_prime)
+	        d_walk = np.append(d_walk, d_prime)
+	        sigma_walk = np.append(sigma_walk, sigma_prime)
+	        mu_walk = np.append(mu_walk, mu_prime)
+	        l_walk = np.append(l_walk, l_prime)
+	    else:
+	        beta = np.random.random()
+	        if(beta<=alpha):
+	            c_walk = np.append(c_walk, c_prime)
+	            d_walk = np.append(d_walk, d_prime)
+	            sigma_walk = np.append(sigma_walk, sigma_prime)
+	            mu_walk = np.append(mu_walk, mu_prime)
+	            l_walk = np.append(l_walk, l_prime)
+	        else:
+	            c_walk = np.append(c_walk,c_walk[i])
+	            d_walk = np.append(d_walk,d_walk[i])
+	            sigma_walk = np.append(sigma_walk, sigma_walk[i])
+	            mu_walk = np.append(mu_walk, mu_walk[i])
+	            l_walk = np.append(l_walk, l_init)
+
+	max_index = np.argmax(l_walk)
+	likelihood_obs = str(l_walk[max_index])
+	best_c = str(c_walk[max_index])
+	best_d = str(d_walk[max_index])
+	best_sigma = str(sigma_walk[max_index])
+	best_mu = str(mu_walk[max_index])
+	observacion = str(Pixel_x[k]) + "_" + str(Pixel_y[k])
+		
+	row =  [observacion, best_c, best_d, best_sigma, best_mu, likelihood_obs]
+	rows = np.vstack((rows, row))
 
 	
 path = "./fits/gauss_fit.csv"
@@ -95,22 +99,10 @@ path = "./fits/gauss_fit.csv"
 print "Creando archivo"
 
 with open(path, "wb") as f:
-	writer = csv.writer(f)
+	writer = csv.writer(f, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
 	for line in rows:
 		writer.writerow(line)    
 					
 f.close()		
 
-#Creacion de grafica
-'''
-gauss_fit = gauss_model(time, best_c, best_d, best_sigma, best_mu)
-titulo = "Pixel " + str(i) + "," + str(b)
-path = "./Graficas/gauss_fit/"+str(i) + "_" + str(b) +".png"
-fig = plt.figure()
-plt.plot(time, campo)
-plt.plot(time, gauss_fit)
-plt.title(titulo)
-plt.xlabel("Tiempo [Minutos]")
-plt.ylabel("Campo Magnetico [Gauss]")
-plt.savefig("orbitas-1000yr.png") '''
 						
