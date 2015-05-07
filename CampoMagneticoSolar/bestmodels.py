@@ -32,11 +32,11 @@ gaussfit = gaussfit[2:, :]
 
 time = np.loadtxt("./data/time_series.csv")
 
-linearfit = np.zeros((1,6))
+linearfit = np.zeros((1,4))
 with open('./fits/linear_fit.csv', 'rb') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     for row in reader:
-        linearfit = np.vstack((gaussfit, row))
+        linearfit = np.vstack((linearfit, row))
         
 linearfit = linearfit[2:, :]
 
@@ -94,7 +94,7 @@ for i in range(100):
 		n = float(stepfit[i, 4])
 		t_0 = float(stepfit[i, 5])
 
-		row = [observacion, 'step', 'NA', 'NA' 'NA', 'NA', 'NA', 'NA', f, g, h, n, t_0]
+		row = [observacion, 'step', 'NA', 'NA','NA', 'NA', 'NA', 'NA', f, g, h, n, t_0]
 		rows = np.vstack((rows, row))
 
 		#creacion de grafica
@@ -125,7 +125,7 @@ for i in range(100):
 
 		#creacion de grafica
 
-		linear_fit = linear_model(time, f, g, h, n, t_0)
+		linear_fit = linear_model(time, a, b)
 		titulo = "Pixel " + observacion
 		path = "./Graficas/"+ observacion +".png"
 		informacion = "a = " + linearfit[i, 1] + "\n" + "b = " + linearfit[i, 2] + "\n" + "likelihood = " + linearfit[i, -1] + "\n" 
