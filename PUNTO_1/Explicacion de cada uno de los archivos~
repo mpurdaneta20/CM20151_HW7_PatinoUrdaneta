@@ -1,0 +1,12 @@
+Explicacion
+
+No se logro llenar el album de manera rapida por lo cual se realizaron distintos intentos con distintas iteraciones.
+
+	-Mundial.py Incluye las iteraciones de 10 hasta 100 de 10 en 10, las iteraciones de 100 a 1000 de 100 en 100, las iteraciones de 1000 a 10000 de 1000 en 1000 y las iteraciones de 		 		 10000 a 100000 de 10000 en 10000. Para un total de 36 iteraciones. En este caso se pierde una gran cantidad de precision aunque segun la estadistica una muestra es estadisticamente relevante 	 cuando supera n=30 (En un principio si no es factible llenar el album de 50 en 50 esta es una buena representacion de como se solucionaria el problema propuesto.)
+	
+	-Mundial_100000.py Incluye las iteraciones de 10 hasta 1000 de 10 en 10 y a su vez tiene el codigo que compila el csv generado por el codigo de Mundial_50.py
+	-Mundial_50.py Incluye las iteraciones de 1000 hasta 100000 de 50 en 50. Se demora como 2 dias y un poco mas. (Este sera enviado despues dado que aun sigue corriendo)
+
+	-CostoAlbumMundial_probabilidades_Funciona.csv Demuestra que el metodo equiprobable de llenar el album funciona pero se demora bastante.
+	-CostoAlbumMundial_36iteraciones.csv Genera el numero de albums a llenar, la varianza y el valor esperado del costo de llenar el album
+	-CostoAlbumMundial10_1000_10.csv Muestra el resultado de la primera parte de 
