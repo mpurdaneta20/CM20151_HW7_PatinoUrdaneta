@@ -1,7 +1,7 @@
 library(lubridate)
 library(dplyr)
 library(tidyr)
-times <- read.csv("times.csv")
+times <- read.csv("./data/times.csv")
 
 colnames(times) <- c("Fecha","Hora")
 times <- data.frame(do.call(rbind, strsplit(as.vector(times$Hora), split = "_")))
@@ -16,5 +16,5 @@ for (i in 1:207 ) {
   time_series[i] <- difftime(Fechas$FechaHora[i], Fechas$FechaHora[1], units = "mins") 
 }
 
-write.csv(time_series, file = "time_series.csv", row.names = FALSE)
+write.table(time_series, file = "time_series.csv", row.names = FALSE, col.names = FALSE)
 
