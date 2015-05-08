@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import csv
 import math
 
+print "Haciendo ajuste de paso"
+
 sdo = pyfits.open('./data/hmi.m_45s.magnetogram.subregion_x1y1.fits')
 time = np.loadtxt("./data/time_series.csv")
 data = sdo[0].data

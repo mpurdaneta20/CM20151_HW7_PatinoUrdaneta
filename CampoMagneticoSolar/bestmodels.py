@@ -4,16 +4,17 @@ import math
 import matplotlib.pyplot as plt
 import pyfits
 
-def gauss_model(t,c,d,sigma,mu):
-	return c + d*t + (1/(sigma*np.sqrt(2*math.pi)))*np.exp(-0.5*((t-mu)/sigma)**2)
+#Definicion de modelos usados
+def gauss_model(t,c,d,sigma,mu, A):
+	return c + d*t + (A/(sigma*np.sqrt(2*math.pi)))*np.exp(-0.5*((t-mu)/sigma)**2)
 
 def step_model(t, f, g, h, n, t_0):
     return f + g*t + h*(1+(2/math.pi)*np.arctan(n*(t-t_0)))
 
 def linear_model(x_obs, a, b):
     return x_obs*b + a
-#Lectura de archivos e importacion de datos
 
+#Lectura de archivos e importacion de datos
 stepfit = np.zeros((1,7))
 with open('./fits/step_fit.csv', 'rb') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
@@ -22,7 +23,7 @@ with open('./fits/step_fit.csv', 'rb') as csvfile:
         
 stepfit = stepfit[2:, :]
 
-gaussfit = np.zeros((1,6))
+gaussfit = np.zeros((1,7))
 with open('./fits/gauss_fit.csv', 'rb') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     for row in reader:
@@ -44,11 +45,10 @@ sdo = pyfits.open('./data/hmi.m_45s.magnetogram.subregion_x1y1.fits')
 time = np.loadtxt("./data/time_series.csv")
 data = sdo[0].data
 
+#Se crea el header del csv
+rows = ['observacion', 'modelo', 'a', 'b', 'c', 'd', 'sigma', 'mu', 'A','f', 'g', 'h', 'n' , 't_0']
 
-rows = ['observacion', 'modelo', 'a', 'b', 'c', 'd', 'sigma', 'mu', 'f', 'g', 'h', 'n' , 't_0']
-
-#Comparacion de likelihoods
-
+#Comparacion de likelihoods para determinar el modelo que mas se ajusta a los datos
 for i in range(100):
 
 	print i
@@ -65,11 +65,12 @@ for i in range(100):
 		d = float(gaussfit[i, 2])
 		sigma = float(gaussfit[i, 3])
 		mu = float(gaussfit[i, 4])
+		A = float(gaussfit[i, 5])
 
-		row = [observacion, 'gauss', 'NA', 'NA', c, d, sigma, mu, 'NA', 'NA', 'NA', 'NA', 'NA']
+		row = [observacion, 'gauss', 'NA', 'NA', c, d, sigma, mu, A, 'NA', 'NA', 'NA', 'NA', 'NA']
 		rows = np.vstack((rows, row))
 
-		gauss_fit = gauss_model(time, c, d, sigma, mu)
+		gauss_fit = gauss_model(time, c, d, sigma, mu, A)
 		titulo = "Pixel " + observacion
 		path = "./Graficas/"+ observacion +".png"
 		informacion = "c = " + gaussfit[i, 1] + "\n" + "d = " + gaussfit[i, 2] + "\n" + "sigma = " + gaussfit[i, 3] + "\n" + "mu = " + gaussfit[i, 4] + "\n" + "likelihood = " + gaussfit[i, -1] + "\n" 
@@ -94,7 +95,7 @@ for i in range(100):
 		n = float(stepfit[i, 4])
 		t_0 = float(stepfit[i, 5])
 
-		row = [observacion, 'step', 'NA', 'NA','NA', 'NA', 'NA', 'NA', f, g, h, n, t_0]
+		row = [observacion, 'step', 'NA', 'NA','NA', 'NA', 'NA', 'NA', 'NA', f, g, h, n, t_0]
 		rows = np.vstack((rows, row))
 
 		#creacion de grafica
@@ -120,7 +121,7 @@ for i in range(100):
 		a = float(linearfit[i, 1])
 		b = float(linearfit[i, 2])
 
-		row = [observacion, 'linear', a, b, 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA']
+		row = [observacion, 'linear', a, b, 'NA', 'NA', 'NA', 'NA','NA', 'NA', 'NA', 'NA', 'NA', 'NA']
 		rows = np.vstack((rows, row))
 
 		#creacion de grafica
@@ -139,9 +140,7 @@ for i in range(100):
 		fig.text(1,1,informacion, verticalalignment='top', horizontalalignment='right')
 		plt.savefig(path) 
 		
-
-
-
+#Se escribe el archivo del mejor modelo para cada pixel
 path = "./fits/bestmodels.txt"
 
 with open(path, "wb") as f:

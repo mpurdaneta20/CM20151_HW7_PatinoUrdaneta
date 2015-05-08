@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import csv
 import math
 
+print "Haciendo ajuste lineal"
+
 #Importacion de datos
 
 sdo = pyfits.open('./data/hmi.m_45s.magnetogram.subregion_x1y1.fits')
